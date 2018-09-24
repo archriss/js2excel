@@ -33896,6 +33896,25 @@ function convert(csv, separator) {
     });
     return result;
 }
+function jsonSheets2excel(opts) {
+    var _a = opts.data,
+        data = _a === void 0 ? {} : _a,
+        _b = opts.name,
+        name = _b === void 0 ? 'excel' : _b,
+        _c = opts.formateDate,
+        formateDate = _c === void 0 ? 'dd/mm/yyyy' : _c;
+    var sheetNames = [];
+    var sheets = {};
+    Object.keys(data).map(function (sheetName) {
+        var sheet = data[sheetName];
+        var ws = xlsx_1.json_to_sheet(sheet, { dateNF: formateDate });
+        sheetNames.push(sheetName);
+        sheets[sheetName] = ws;
+    });
+    var wb = new IWorkBook(sheetNames, sheets);
+    var wbout = xlsx_2(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+    FileSaver_1(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), name + '.xlsx');
+}
 function json2excel(opts) {
     var _a = opts.data,
         data = _a === void 0 ? [] : _a,
@@ -33970,6 +33989,7 @@ function csv2json(files, cb, encode, separator) {
 var js2excel = {
     excel2json: excel2json,
     json2excel: json2excel,
+    jsonSheets2excel: jsonSheets2excel,
     csv2json: csv2json
 };
 
